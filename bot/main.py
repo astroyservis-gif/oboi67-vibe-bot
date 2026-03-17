@@ -1,0 +1,403 @@
+import asyncio
+import logging
+import os
+from contextlib import asynccontextmanager
+
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import CommandStart, StateFilter
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
+from aiogram.types import FSInputFile, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import uvicorn
+from dotenv import load_dotenv
+
+# Load env vars
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN")
+ADMIN_ID = os.getenv("ADMIN_ID", "YOUR_ADMIN_ID") # Yuri's telegram ID
+
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+dp = Dispatcher()
+
+# --- MODELS ---
+class Lead(BaseModel):
+    name: str
+    phone: str
+    message: str | None = None
+    source: str = "Website Contact Form"
+
+class CalcStates(StatesGroup):
+    wallpaper_type = State()
+    area = State()
+    dismantle = State()
+    waiting_for_contact = State()
+
+# --- PRICES ---
+PRICES = {
+    "Виниловые": 350,
+    "Флизелин": 350,
+    "Бумага": 350,
+    "Премиум-текстиль": 800,
+    "Демонтаж": 150,
+    "Грунтовка": 0
+}
+
+# --- KEYBOARDS ---
+def get_main_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📏 Рассчитать стоимость", callback_data="calc_start")
+    builder.button(text="📸 Посмотреть работы", callback_data="portfolio_menu")
+    builder.button(text="🤝 Почему Юрию доверяют", callback_data="about_master")
+    builder.button(text="❓ Ответы на вопросы", callback_data="faq_menu")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_portfolio_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📐 Стыки и детали", callback_data="portfolio_details")
+    builder.button(text="💎 Дорогие материалы", callback_data="portfolio_premium")
+    builder.button(text="🏠 Общий вид", callback_data="portfolio_general")
+    builder.button(text="⬅️ Назад", callback_data="main_menu")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_wallpaper_type_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Виниловые", callback_data="type:Виниловые")
+    builder.button(text="Флизелин", callback_data="type:Флизелин")
+    builder.button(text="Бумага", callback_data="type:Бумага")
+    builder.button(text="Премиум-текстиль", callback_data="type:Премиум-текстиль")
+    builder.adjust(2)
+    return builder.as_markup()
+
+def get_dismantle_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Да", callback_data="dismantle:yes")
+    builder.button(text="Нет", callback_data="dismantle:no")
+    builder.adjust(2)
+    return builder.as_markup()
+
+def get_contact_keyboard():
+    kb = ReplyKeyboardMarkup(
+        keyboard=[[KeyboardButton(text="📱 Отправить номер телефона", request_contact=True)]],
+        resize_keyboard=True,
+        one_time_keyboard=True
+    )
+    return kb
+
+def get_yuri_contact_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📏 Рассчитать цену", callback_data="calc_start")
+    builder.button(text="📱 Написать Юрию в личку", url="https://t.me/Yura_Oboi67") # Replace with real link
+    builder.button(text="❓ Ответы на вопросы", callback_data="faq_menu")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_faq_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Сколько времени занимает одна комната?", callback_data="faq_time")
+    builder.button(text="Что делать, если через месяц разойдется стык?", callback_data="faq_warranty")
+    builder.button(text="Нужно ли мне покупать клей и пленку?", callback_data="faq_materials")
+    builder.button(text="Как подготовить комнату к вашему приходу?", callback_data="faq_prep")
+    builder.button(text="⬅️ Назад", callback_data="main_menu")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_faq_answer_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Сколько времени занимает одна комната?", callback_data="faq_time")
+    builder.button(text="Что делать, если через месяц разойдется стык?", callback_data="faq_warranty")
+    builder.button(text="Нужно ли мне покупать клей и пленку?", callback_data="faq_materials")
+    builder.button(text="Как подготовить комнату к вашему приходу?", callback_data="faq_prep")
+    builder.button(text="📏 Рассчитать стоимость", callback_data="calc_start")
+    builder.button(text="📸 Посмотреть работы", callback_data="portfolio_menu")
+    builder.button(text="🤝 Почему Юрию доверяют", callback_data="about_master")
+    builder.button(text="📢 Канал: Секреты идеальных стен", url="https://t.me/oboi_pro_67")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_faq_return_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📏 Рассчитать стоимость", callback_data="calc_start")
+    builder.button(text="📸 Посмотреть работы", callback_data="portfolio_menu")
+    builder.button(text="🤝 Почему Юрию доверяют", callback_data="about_master")
+    builder.button(text="📢 Канал: Секреты идеальных стен", url="https://t.me/oboi_pro_67")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_calc_return_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📈 Рассчитать мой проект", callback_data="calc_start")
+    builder.button(text="⬅️ Назад", callback_data="portfolio_menu")
+    builder.adjust(1)
+    return builder.as_markup()
+
+# --- HANDLERS ---
+@dp.message(CommandStart())
+@dp.callback_query(F.data == "main_menu")
+async def command_start_handler(event: types.Message | types.CallbackQuery, state: FSMContext) -> None:
+    await state.clear()
+    welcome_text = (
+        f"Здравствуйте, {event.from_user.full_name if isinstance(event, types.Message) else event.from_user.full_name}! 👋\n\n"
+        "Я — бот-помощник Юрия Косенкова, специалиста по поклейке обоев в Смоленске.\n"
+        "Если вам нужно аккуратно поклеить обои, но нет времени вникать в детали и контролировать каждый шаг — вы по адресу.\n"
+        "Юрий берет все хлопоты на себя: от правильной грунтовки до уборки мусора.\n"
+        "Здесь вы можете оставить заявку на замер или узнать подробности о его работе.\n\n"
+        "Выберите действие ниже:"
+    )
+    
+    if isinstance(event, types.Message):
+        await event.answer(welcome_text, reply_markup=get_main_keyboard())
+    else:
+        await event.message.edit_text(welcome_text, reply_markup=get_main_keyboard())
+        await event.answer()
+
+@dp.callback_query(F.data == "about_master")
+async def about_master_handler(callback: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    bio_text = (
+        "<b>Здравствуйте! Я — Юрий.</b>\n\n"
+        "Я знаю, что вы цените свое время и спокойствие. Моя задача — идеальный результат, пока вы занимаетесь своими делами.\n\n"
+        "<b>Почему мне доверяют:</b>\n"
+        "🤝 <b>Надежность:</b> Пунктуальность и соблюдение всех договоренностей.\n"
+        "🧹 <b>Чистота:</b> Работаю с пылесосом. После меня — только чистая комната.\n"
+        "💎 <b>Качество:</b> Лазерная точность и невидимые стыки.\n"
+        "🛡 <b>Гарантия:</b> 6 месяцев на все работы.\n"
+        "🛒 <b>Автономность:</b> Сам подберу и закуплю правильные материалы.\n\n"
+        "<i>С чего начнем ваш беззаботный ремонт?</i>"
+    )
+    photo_path = os.path.join(os.path.dirname(__file__), '../docs/phote_about_me.png')
+    
+    # We delete the previous message to send a new message with photo cleanly
+    await callback.message.delete()
+    if os.path.exists(photo_path):
+        await callback.message.answer_photo(
+            photo=FSInputFile(photo_path),
+            caption=bio_text,
+            reply_markup=get_yuri_contact_keyboard()
+        )
+    else:
+        await callback.message.answer(
+            bio_text,
+            reply_markup=get_yuri_contact_keyboard()
+        )
+    await callback.answer()
+
+
+# --- CALCULATOR FSM ---
+@dp.callback_query(F.data == "calc_start")
+async def calc_start(callback: types.CallbackQuery, state: FSMContext):
+    await state.set_state(CalcStates.wallpaper_type)
+    await callback.message.answer("Какой тип обоев планируете клеить?", reply_markup=get_wallpaper_type_keyboard())
+    await callback.answer()
+
+@dp.callback_query(StateFilter(CalcStates.wallpaper_type), F.data.startswith("type:"))
+async def calc_type_selected(callback: types.CallbackQuery, state: FSMContext):
+    wall_type = callback.data.split(":")[1]
+    await state.update_data(wallpaper_type=wall_type)
+    
+    advice = "Отличный выбор! Для этого типа нужен специализированный клей, который я подберу сам."
+    if wall_type == "Премиум-текстиль":
+        advice = "Текстильные обои требуют ювелирной работы и контроля влажности клея. Я использую специальные добавки."
+
+    await state.set_state(CalcStates.area)
+    await callback.message.answer(f"{advice}\n\nНапишите примерную площадь стен (в м²):")
+    await callback.answer()
+
+@dp.message(StateFilter(CalcStates.area))
+async def calc_area_input(message: types.Message, state: FSMContext):
+    try:
+        area = float(message.text.replace(',', '.'))
+        if area <= 0:
+            raise ValueError
+    except ValueError:
+        await message.answer("Пожалуйста, введите корректное число (например: 25.5)")
+        return
+
+    await state.update_data(area=area)
+    await state.set_state(CalcStates.dismantle)
+    await message.answer("Нужен ли демонтаж старых обоев?", reply_markup=get_dismantle_keyboard())
+
+@dp.callback_query(StateFilter(CalcStates.dismantle), F.data.startswith("dismantle:"))
+async def calc_dismantle_selected(callback: types.CallbackQuery, state: FSMContext):
+    needs_dismantle = callback.data.split(":")[1] == "yes"
+    await state.update_data(dismantle=needs_dismantle)
+    
+    data = await state.get_data()
+    w_type = data['wallpaper_type']
+    area = data['area']
+    
+    # 3 second thinking delay
+    msg = await callback.message.answer("Идет расчет оптимальной технологии... ⏳")
+    await asyncio.sleep(3)
+    
+    # Calculate price
+    base_price = PRICES.get(w_type, 350)
+    dismantle_price = PRICES["Демонтаж"] if needs_dismantle else 0
+    total_price = int(area * (base_price + dismantle_price))
+    
+    await state.update_data(total_price=total_price)
+    await state.set_state(CalcStates.waiting_for_contact)
+    
+    final_text = (
+        f"Для ваших обоев <b>«{w_type}»</b> на площади <b>{area} м²</b> Юрий подберёт оптимальный набор клеевых составов.\n\n"
+        f"💰 Примерная стоимость работ: <b>~{total_price} руб.</b>\n"
+        "<i>(Грунтовка стен включена в стоимость)</i>\n\n"
+        "Чтобы Юрий подтвердил окончательную цену и проверил свободные даты в своем графике, нажмите кнопку ниже."
+    )
+    
+    await msg.delete()
+    await callback.message.answer(final_text, reply_markup=get_contact_keyboard())
+    await callback.answer()
+
+
+@dp.message(StateFilter(CalcStates.waiting_for_contact), F.contact)
+@dp.message(StateFilter(CalcStates.waiting_for_contact), F.text)
+async def calc_contact_received(message: types.Message, state: FSMContext):
+    phone = "Not provided"
+    if message.contact:
+        phone = message.contact.phone_number
+    elif message.text:
+       phone = message.text
+       
+    data = await state.get_data()
+    
+    # Send Thanks to user
+    await message.answer(
+        "✅ Спасибо! Ваша заявка принята. Юрий свяжется с вами в ближайшее время.", 
+        reply_markup=ReplyKeyboardRemove()
+    )
+    # Channel link and return to menu
+    await message.answer(
+        "Пока Юрий готовит ответ, вы можете заглянуть в его канал с секретами ремонта:",
+        reply_markup=get_faq_return_keyboard()
+    )
+    
+    # Notification to Admin
+    dismantle_str = "Да" if data.get('dismantle') else "Нет"
+    admin_text = (
+        f"🔥 <b>НОВАЯ ЗАЯВКА (Телеграм)!</b>\n\n"
+        f"Имя: {message.from_user.full_name}\n"
+        f"Тел: {phone}\n"
+        f"Заказ: {data.get('wallpaper_type')}, {data.get('area')} м², Демонтаж: {dismantle_str}\n"
+        f"Расчет бота: {data.get('total_price')} руб."
+    )
+    try:
+        await bot.send_message(chat_id=ADMIN_ID, text=admin_text)
+    except Exception as e:
+        logging.error(f"Failed to notify admin: {e}")
+        
+    await state.clear()
+
+
+# --- FAQ SECTION ---
+@dp.callback_query(F.data == "faq_menu")
+async def faq_menu_handler(callback: types.CallbackQuery):
+    if callback.message.photo:
+        await callback.message.delete()
+        await callback.message.answer("Вы задаете отличные вопросы! Выберите тему ниже:", reply_markup=get_faq_keyboard())
+    else:
+        await callback.message.edit_text("Вы задаете отличные вопросы! Выберите тему ниже:", reply_markup=get_faq_keyboard())
+    await callback.answer()
+
+@dp.callback_query(F.data.startswith("faq_"))
+async def faq_item_handler(callback: types.CallbackQuery):
+    topic = callback.data
+    answer_text = ""
+    
+    if topic == "faq_time":
+        answer_text = "<b>Сколько времени занимает одна комната?</b>\n\nСтандартная комната клеится за 1 день. Я фиксирую сроки в договоре и не пропадаю с объекта."
+    elif topic == "faq_warranty":
+        answer_text = "<b>Что делать, если через месяц разойдется стык?</b>\n\nЯ работаю официально как самозанятый и даю гарантию 6 месяцев. Если что-то случится не по вашей вине — приеду и исправлю бесплатно."
+    elif topic == "faq_materials":
+        answer_text = "<b>Нужно ли мне покупать клей и пленку?</b>\n\nЯ рекомендую конкретные составы под ваши обои или могу закупить и привезти проверенный клей сам."
+    elif topic == "faq_prep":
+        answer_text = "<b>Как подготовить комнату к вашему приходу?</b>\n\nОсвободите стены, отодвиньте мебель на 1.5 метра. Подробную инструкцию пришлю вам сразу после записи на замер."
+    else:
+        return
+
+    await callback.message.edit_text(answer_text, reply_markup=get_faq_answer_keyboard())
+    await callback.answer()
+
+
+# --- PORTFOLIO SECTION ---
+@dp.callback_query(F.data == "portfolio_menu")
+async def portfolio_menu_handler(callback: types.CallbackQuery):
+    await callback.message.edit_text("Какие примеры работ вам интересны?", reply_markup=get_portfolio_keyboard())
+    await callback.answer()
+
+@dp.callback_query(F.data.startswith("portfolio_"))
+async def portfolio_category_handler(callback: types.CallbackQuery):
+    cat = callback.data
+    caption = ""
+    
+    if cat == "portfolio_details":
+        caption = "🔍 Без видимых стыков. Лазерная точность на углах и вокруг розеток."
+    elif cat == "portfolio_premium":
+        caption = "💎 Работа с дорогими материалами. Аккуратность и подбор правильного клея."
+    elif cat == "portfolio_general":
+        caption = "🏠 Общий вид. Чистота на объекте — работаю с пылесосом."
+    else:
+        return
+
+    # In a real scenario, use actual file_ids or actual valid FSInputFiles
+    # For now, we simulate uploading 2 placeholder files if they existed, or skip to dummy text
+    # Since we lack real photos, we will send text and the button.
+    
+    await callback.message.delete()
+    await callback.message.answer(
+        f"{caption}\n\n<i>(Здесь будет галерея фотографий)</i>", 
+        reply_markup=get_calc_return_keyboard()
+    )
+    await callback.answer()
+
+
+# --- FASTAPI LOGIC ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Start bot polling in background
+    asyncio.create_task(dp.start_polling(bot))
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # In production, restrict to frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/api/leads")
+async def receive_lead(lead: Lead):
+    """
+    Endpoint for the React frontend to push leads to Telegram
+    """
+    admin_text = (
+        f"🌐 <b>НОВАЯ ЗАЯВКА С САЙТА!</b>\n\n"
+        f"👤 Имя: {lead.name}\n"
+        f"📞 Телефон: {lead.phone}\n"
+    )
+    if lead.message:
+        admin_text += f"💬 Комментарий: {lead.message}\n"
+
+    try:
+        await bot.send_message(chat_id=ADMIN_ID, text=admin_text)
+        return {"status": "success", "message": "Lead forwarded to Telegram"}
+    except Exception as e:
+        logging.error(f"Failed to send lead to Telegram: {e}")
+        return {"status": "error", "message": str(e)}
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # Run the combined app
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+

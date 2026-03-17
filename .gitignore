@@ -1,0 +1,17 @@
+# Окружение Python (для бота)
+venv/
+*.pyc
+__pycache__/
+
+# Зависимости сайта (React/Next.js)
+node_modules/
+.next/
+dist/
+build/
+
+# Секреты (пароли, ключи API)
+.env
+
+# Системные файлы
+.DS_Store
+Thumbs.db
