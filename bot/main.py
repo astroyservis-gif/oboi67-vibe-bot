@@ -78,14 +78,16 @@ def get_wallpaper_type_keyboard():
     builder.button(text="Флизелин", callback_data="type:Флизелин")
     builder.button(text="Бумага", callback_data="type:Бумага")
     builder.button(text="Премиум-текстиль", callback_data="type:Премиум-текстиль")
-    builder.adjust(2)
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
+    builder.adjust(2, 2, 1)
     return builder.as_markup()
 
 def get_dismantle_keyboard():
     builder = InlineKeyboardBuilder()
     builder.button(text="Да", callback_data="dismantle:yes")
     builder.button(text="Нет", callback_data="dismantle:no")
-    builder.adjust(2)
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
+    builder.adjust(2, 1)
     return builder.as_markup()
 
 def get_area_mode_keyboard():
@@ -93,6 +95,7 @@ def get_area_mode_keyboard():
     builder.button(text="📏 Введу точную площадь", callback_data="area_mode:exact")
     builder.button(text="🏠 Выбрать по типу жилья", callback_data="area_mode:house")
     builder.button(text="📐 Посчитать по площади пола", callback_data="area_mode:floor")
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     builder.adjust(1)
     return builder.as_markup()
 
@@ -101,6 +104,7 @@ def get_house_type_keyboard():
     builder.button(text="Комната (15 м² по полу)", callback_data="house:room")
     builder.button(text="1-к квартира", callback_data="house:1bed")
     builder.button(text="2-к квартира", callback_data="house:2bed")
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     builder.adjust(1)
     return builder.as_markup()
 
@@ -109,7 +113,13 @@ def get_ceiling_keyboard():
     builder.button(text="Стандарт (2.5-2.6м)", callback_data="ceiling:std")
     builder.button(text="Новостройка (2.7-2.8м)", callback_data="ceiling:new")
     builder.button(text="Высокие (3м+)", callback_data="ceiling:high")
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     builder.adjust(1)
+    return builder.as_markup()
+
+def get_back_to_main_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     return builder.as_markup()
 
 def get_contact_keyboard():
@@ -168,8 +178,8 @@ def get_calc_return_keyboard():
     return builder.as_markup()
 
 # --- HANDLERS ---
-@dp.message(CommandStart())
-@dp.callback_query(F.data == "main_menu")
+@dp.message(CommandStart(), StateFilter('*'))
+@dp.callback_query(F.data == "main_menu", StateFilter('*'))
 async def command_start_handler(event: types.Message | types.CallbackQuery, state: FSMContext) -> None:
     await state.clear()
     welcome_text = (
@@ -244,13 +254,13 @@ async def calc_area_mode_selected(callback: types.CallbackQuery, state: FSMConte
     mode = callback.data.split(":")[1]
     if mode == "exact":
         await state.set_state(CalcStates.area_exact)
-        await callback.message.answer("Напишите точную площадь стен (в м²):")
+        await callback.message.answer("Напишите точную площадь стен (в м²):", reply_markup=get_back_to_main_keyboard())
     elif mode == "house":
         await state.set_state(CalcStates.house_type)
         await callback.message.answer("Выберите тип жилья:", reply_markup=get_house_type_keyboard())
     elif mode == "floor":
         await state.set_state(CalcStates.floor_area)
-        await callback.message.answer("Напишите примерную площадь пола (в м²):")
+        await callback.message.answer("Напишите примерную площадь пола (в м²):", reply_markup=get_back_to_main_keyboard())
     await callback.answer()
 
 @dp.message(StateFilter(CalcStates.area_exact))
