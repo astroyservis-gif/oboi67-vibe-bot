@@ -35,7 +35,11 @@ class Lead(BaseModel):
 
 class CalcStates(StatesGroup):
     wallpaper_type = State()
-    area = State()
+    area_mode = State()
+    area_exact = State()
+    house_type = State()
+    ceiling_height = State()
+    floor_area = State()
     dismantle = State()
     waiting_for_contact = State()
 
@@ -82,6 +86,30 @@ def get_dismantle_keyboard():
     builder.button(text="Да", callback_data="dismantle:yes")
     builder.button(text="Нет", callback_data="dismantle:no")
     builder.adjust(2)
+    return builder.as_markup()
+
+def get_area_mode_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="📏 Введу точную площадь", callback_data="area_mode:exact")
+    builder.button(text="🏠 Выбрать по типу жилья", callback_data="area_mode:house")
+    builder.button(text="📐 Посчитать по площади пола", callback_data="area_mode:floor")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_house_type_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Комната (15 м² по полу)", callback_data="house:room")
+    builder.button(text="1-к квартира", callback_data="house:1bed")
+    builder.button(text="2-к квартира", callback_data="house:2bed")
+    builder.adjust(1)
+    return builder.as_markup()
+
+def get_ceiling_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Стандарт (2.5-2.6м)", callback_data="ceiling:std")
+    builder.button(text="Новостройка (2.7-2.8м)", callback_data="ceiling:new")
+    builder.button(text="Высокие (3м+)", callback_data="ceiling:high")
+    builder.adjust(1)
     return builder.as_markup()
 
 def get_contact_keyboard():
@@ -207,21 +235,76 @@ async def calc_type_selected(callback: types.CallbackQuery, state: FSMContext):
     if wall_type == "Премиум-текстиль":
         advice = "Текстильные обои требуют ювелирной работы и контроля влажности клея. Я использую специальные добавки."
 
-    await state.set_state(CalcStates.area)
-    await callback.message.answer(f"{advice}\n\nНапишите примерную площадь стен (в м²):")
+    await state.set_state(CalcStates.area_mode)
+    await callback.message.answer(f"{advice}\n\nЧтобы рассчитать стоимость, мне нужно знать площадь стен. Как вам удобнее поступить?", reply_markup=get_area_mode_keyboard())
     await callback.answer()
 
-@dp.message(StateFilter(CalcStates.area))
-async def calc_area_input(message: types.Message, state: FSMContext):
+@dp.callback_query(StateFilter(CalcStates.area_mode), F.data.startswith("area_mode:"))
+async def calc_area_mode_selected(callback: types.CallbackQuery, state: FSMContext):
+    mode = callback.data.split(":")[1]
+    if mode == "exact":
+        await state.set_state(CalcStates.area_exact)
+        await callback.message.answer("Напишите точную площадь стен (в м²):")
+    elif mode == "house":
+        await state.set_state(CalcStates.house_type)
+        await callback.message.answer("Выберите тип жилья:", reply_markup=get_house_type_keyboard())
+    elif mode == "floor":
+        await state.set_state(CalcStates.floor_area)
+        await callback.message.answer("Напишите примерную площадь пола (в м²):")
+    await callback.answer()
+
+@dp.message(StateFilter(CalcStates.area_exact))
+async def calc_area_exact_input(message: types.Message, state: FSMContext):
     try:
         area = float(message.text.replace(',', '.'))
-        if area <= 0:
-            raise ValueError
+        if area <= 0: raise ValueError
     except ValueError:
         await message.answer("Пожалуйста, введите корректное число (например: 25.5)")
         return
+    await state.update_data(area=area, lazy_text="")
+    await state.set_state(CalcStates.dismantle)
+    await message.answer("Нужен ли демонтаж старых обоев?", reply_markup=get_dismantle_keyboard())
 
-    await state.update_data(area=area)
+@dp.callback_query(StateFilter(CalcStates.house_type), F.data.startswith("house:"))
+async def calc_house_type_selected(callback: types.CallbackQuery, state: FSMContext):
+    h_type = callback.data.split(":")[1]
+    
+    bases = {"room": ("Комната", 40), "1bed": ("1-к квартира", 100), "2bed": ("2-к квартира", 140)}
+    house_name, base_area = bases.get(h_type, ("Комната", 40))
+    
+    await state.update_data(base_area=base_area, house_name=house_name)
+    await state.set_state(CalcStates.ceiling_height)
+    await callback.message.answer("Выберите высоту потолков:", reply_markup=get_ceiling_keyboard())
+    await callback.answer()
+
+@dp.callback_query(StateFilter(CalcStates.ceiling_height), F.data.startswith("ceiling:"))
+async def calc_ceiling_selected(callback: types.CallbackQuery, state: FSMContext):
+    c_type = callback.data.split(":")[1]
+    
+    coeffs = {"std": ("Стандарт (2.5-2.6м)", 0.92), "new": ("Новостройка (2.7-2.8м)", 1.0), "high": ("Высокие (3м+)", 1.12)}
+    ceil_name, coeff = coeffs.get(c_type, ("Стандарт (2.5-2.6м)", 0.92))
+    
+    data = await state.get_data()
+    area = data.get('base_area', 40) * coeff
+    lazy_text = f"Расчет выполнен для {data.get('house_name', 'комнаты')} с высотой потолков {ceil_name}. Это помогло сделать смету точнее на этапе оценки."
+    
+    await state.update_data(area=area, lazy_text=lazy_text)
+    await state.set_state(CalcStates.dismantle)
+    await callback.message.answer("Нужен ли демонтаж старых обоев?", reply_markup=get_dismantle_keyboard())
+    await callback.answer()
+
+@dp.message(StateFilter(CalcStates.floor_area))
+async def calc_floor_area_input(message: types.Message, state: FSMContext):
+    try:
+        floor = float(message.text.replace(',', '.'))
+        if floor <= 0: raise ValueError
+    except ValueError:
+        await message.answer("Пожалуйста, введите корректное число (например: 15)")
+        return
+    
+    area = floor * 2.7
+    lazy_text = f"Расчет стен выполнен примерно по площади пола ({floor:.1f} м²)."
+    await state.update_data(area=area, lazy_text=lazy_text)
     await state.set_state(CalcStates.dismantle)
     await message.answer("Нужен ли демонтаж старых обоев?", reply_markup=get_dismantle_keyboard())
 
@@ -232,13 +315,12 @@ async def calc_dismantle_selected(callback: types.CallbackQuery, state: FSMConte
     
     data = await state.get_data()
     w_type = data['wallpaper_type']
-    area = data['area']
+    area = float(data.get('area', 0))
+    lazy_text = data.get('lazy_text', '')
     
-    # 3 second thinking delay
     msg = await callback.message.answer("Идет расчет оптимальной технологии... ⏳")
     await asyncio.sleep(3)
     
-    # Calculate price
     base_price = PRICES.get(w_type, 350)
     dismantle_price = PRICES["Демонтаж"] if needs_dismantle else 0
     total_price = int(area * (base_price + dismantle_price))
@@ -247,16 +329,17 @@ async def calc_dismantle_selected(callback: types.CallbackQuery, state: FSMConte
     await state.set_state(CalcStates.waiting_for_contact)
     
     final_text = (
-        f"Для ваших обоев <b>«{w_type}»</b> на площади <b>{area} м²</b> Юрий подберёт оптимальный набор клеевых составов.\n\n"
+        f"Для ваших обоев <b>«{w_type}»</b> на площади <b>~{area:.1f} м²</b> Юрий подберёт оптимальный набор клеевых составов.\n\n"
         f"💰 Примерная стоимость работ: <b>~{total_price} руб.</b>\n"
         "<i>(Грунтовка стен включена в стоимость)</i>\n\n"
-        "Чтобы Юрий подтвердил окончательную цену и проверил свободные даты в своем графике, нажмите кнопку ниже."
     )
+    if lazy_text:
+        final_text += f"<i>{lazy_text} Юрий подтвердит итоговую цифру при звонке.</i>\n\n"
+    final_text += "Чтобы Юрий подтвердил окончательную цену и проверил свободные даты в своем графике, нажмите кнопку ниже."
     
     await msg.delete()
     await callback.message.answer(final_text, reply_markup=get_contact_keyboard())
     await callback.answer()
-
 
 @dp.message(StateFilter(CalcStates.waiting_for_contact), F.contact)
 @dp.message(StateFilter(CalcStates.waiting_for_contact), F.text)
@@ -282,11 +365,12 @@ async def calc_contact_received(message: types.Message, state: FSMContext):
     
     # Notification to Admin
     dismantle_str = "Да" if data.get('dismantle') else "Нет"
+    area_formatted = f"{float(data.get('area', 0)):.1f}"
     admin_text = (
         f"🔥 <b>НОВАЯ ЗАЯВКА (Телеграм)!</b>\n\n"
         f"Имя: {message.from_user.full_name}\n"
         f"Тел: {phone}\n"
-        f"Заказ: {data.get('wallpaper_type')}, {data.get('area')} м², Демонтаж: {dismantle_str}\n"
+        f"Заказ: {data.get('wallpaper_type')}, {area_formatted} м², Демонтаж: {dismantle_str}\n"
         f"Расчет бота: {data.get('total_price')} руб."
     )
     try:
