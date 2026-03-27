@@ -13,7 +13,7 @@ function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex-shrink-0 flex items-center">
-              <span className="font-bold text-2xl text-brand-accent-blue font-sans tracking-tight">Юрий<span className="text-brand-accent-graphite">.Обои</span></span>
+              <span className="font-bold text-2xl text-brand-accent-blue font-sans tracking-tight">Обои<span className="text-brand-accent-graphite">67</span></span>
             </div>
             <div className="hidden md:flex space-x-8">
               <a href="#services" className="text-sm font-medium text-gray-700 hover:text-brand-accent-blue transition-colors">Услуги</a>
@@ -36,7 +36,7 @@ function App() {
       {/* Footer */}
       <footer className="bg-brand-gray-dark py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
-           &copy; {new Date().getFullYear()} Профессиональная поклейка обоев. Смоленск. Все права защищены.
+          &copy; {new Date().getFullYear()} Профессиональная поклейка обоев. Смоленск. Все права защищены.
         </div>
       </footer>
     </div>

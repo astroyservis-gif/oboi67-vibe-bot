@@ -12,9 +12,9 @@ export default function Hero() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          
+
           {/* Text Content */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -24,14 +24,14 @@ export default function Hero() {
               <Sparkles className="w-4 h-4 text-brand-accent-blue" />
               <span>Премиальный сервис в Смоленске</span>
             </div>
-            
+
             <h1 className="text-5xl lg:text-6xl font-extrabold text-brand-accent-graphite leading-tight mb-6 tracking-tight">
-              Безупречная поклейка обоев <br/>
+              Безупречная поклейка обоев <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent-blue to-gray-600">
                 без видимых стыков
               </span>
             </h1>
-            
+
             <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
               Профессиональный подход к отделке стен. Используем лазерную разметку и промышленные пылесосы для идеального результата и абсолютной чистоты.
             </p>
@@ -52,8 +52,8 @@ export default function Hero() {
                   <ShieldCheck className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                   <p className="text-sm font-semibold text-gray-900">Гарантия 2 года</p>
-                   <p className="text-xs text-gray-500">По договору</p>
+                  <p className="text-sm font-semibold text-gray-900">Гарантия 1 год</p>
+                  <p className="text-xs text-gray-500">По договору</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -61,8 +61,8 @@ export default function Hero() {
                   <Ruler className="w-5 h-5 text-brand-accent-blue" />
                 </div>
                 <div>
-                   <p className="text-sm font-semibold text-gray-900">Точно в срок</p>
-                   <p className="text-xs text-gray-500">Без задержек</p>
+                  <p className="text-sm font-semibold text-gray-900">Точно в срок</p>
+                  <p className="text-xs text-gray-500">Без задержек</p>
                 </div>
               </div>
             </div>
@@ -76,14 +76,14 @@ export default function Hero() {
             className="relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-brand-gray aspect-[4/3] border border-gray-100">
-              <img 
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80" 
-                alt="Идеально поклеенные обои" 
+              <img
+                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80"
+                alt="Идеально поклеенные обои"
                 className="object-cover w-full h-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-multiply"></div>
             </div>
-            
+
             {/* Floating Badge */}
             <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-xl border border-gray-50 glass-effect flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-brand-accent-blue/10 flex items-center justify-center text-brand-accent-blue font-bold text-xl">
