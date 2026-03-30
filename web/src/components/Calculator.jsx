@@ -7,7 +7,6 @@ const BASE_PRICE = 350;
 export default function Calculator() {
   // --- Refs & View Tracking ---
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { amount: 0.2 });
 
   // --- State ---
   const [area, setArea] = useState(20);
@@ -124,15 +123,17 @@ export default function Calculator() {
                   <motion.label
                     key={item.id}
                     whileTap={{ scale: 0.98 }}
-                    className={`flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${item.state ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'
-                      }`}
+                    className={`flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${
+                      item.state ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'
+                    }`}
                   >
                     <div className="flex-1">
                       <span className="block font-bold text-slate-900">{item.label}</span>
                       <span className="block text-xs text-slate-500 font-medium">{item.desc}</span>
                     </div>
-                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${item.state ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
-                      }`}>
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
+                      item.state ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
+                    }`}>
                       {item.state && <CheckCircle2 className="w-4 h-4 text-white" />}
                     </div>
                     <input type="checkbox" className="hidden" checked={item.state} onChange={(e) => item.setter(e.target.checked)} />
@@ -167,7 +168,79 @@ export default function Calculator() {
                     </AnimatePresence>
                   </div>
 
-                  {/* Add other engineering blocks similarly or map them */}
+                  {/* Потолочная вставка */}
+                  <div className={`p-4 rounded-2xl border-2 transition-all ${ceilingInsert ? 'border-blue-600' : 'border-slate-100'}`}>
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="font-bold text-slate-900 text-sm md:text-base">Потолочная вставка</span>
+                      <input
+                        type="checkbox"
+                        checked={ceilingInsert}
+                        onChange={(e) => setCeilingInsert(e.target.checked)}
+                        className="w-5 h-5 accent-blue-600"
+                      />
+                    </label>
+                    <AnimatePresence>
+                      {ceilingInsert && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
+                            <span className="text-sm text-slate-500">Метров погонных:</span>
+                            <div className="flex items-center bg-slate-100 rounded-xl p-1">
+                              <button
+                                onClick={() => setCeilingMeters(Math.max(1, ceilingMeters - 1))}
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center font-bold">{ceilingMeters}</span>
+                              <button
+                                onClick={() => setCeilingMeters(ceilingMeters + 1)}
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Блок Электроприборы */}
+                  <div className={`p-4 rounded-2xl border-2 transition-all ${complexElectrical ? 'border-blue-600' : 'border-slate-100'}`}>
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="font-bold text-slate-900 text-sm md:text-base">Электроприборы</span>
+                      <input
+                        type="checkbox"
+                        checked={complexElectrical}
+                        onChange={(e) => setComplexElectrical(e.target.checked)}
+                        className="w-5 h-5 accent-blue-600"
+                      />
+                    </label>
+                    <AnimatePresence>
+                      {complexElectrical && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                          <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
+                            <span className="text-sm text-slate-500">Количество:</span>
+                            <div className="flex items-center bg-slate-100 rounded-xl p-1">
+                              <button
+                                onClick={() => setComplexElectricalCount(Math.max(1, complexElectricalCount - 1))}
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center font-bold">{complexElectricalCount}</span>
+                              <button
+                                onClick={() => setComplexElectricalCount(complexElectricalCount + 1)}
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
             </div>
