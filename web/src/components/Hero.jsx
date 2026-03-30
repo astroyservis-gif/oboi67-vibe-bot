@@ -26,9 +26,9 @@ export default function Hero() {
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-extrabold text-brand-accent-graphite leading-tight mb-6 tracking-tight">
-              Безупречная поклейка обоев <br />
+              Обои без стыков <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent-blue to-gray-600">
-                без видимых стыков
+                и лишних хлопот в Смоленске
               </span>
             </h1>
 

@@ -5,22 +5,22 @@ import { CheckCircle2, Droplets, Maximize, Target } from 'lucide-react';
 const standards = [
   {
     icon: <Maximize className="w-6 h-6 text-brand-accent-blue" />,
-    title: "Идеальные стыки",
+    title: "Эстетика единого полотна",
     description: "Используем технологию «невидимого шва». Обои выглядят как единое полотно без изъянов.",
   },
   {
     icon: <Target className="w-6 h-6 text-brand-accent-blue" />,
-    title: "Лазерная разметка",
+    title: "Геометрия без ошибок",
     description: "Применяем профессиональные лазерные уровни для абсолютной геометрической точности оклейки.",
   },
   {
     icon: <Droplets className="w-6 h-6 text-brand-accent-blue" />,
-    title: "Чистота после работы",
+    title: "Бережём ваш интерьер",
     description: "Бережно относимся к вашему интерьеру. Никаких засохших пятен клея на полу или мусора в углах.",
   },
   {
     icon: <CheckCircle2 className="w-6 h-6 text-brand-accent-blue" />,
-    title: "Точный расчет материала",
+    title: "Экономим ваше время и бюджет",
     description: "Помогаем оптимизировать закупку обоев с учетом подгона рисунка, экономя ваш бюджет.",
   }
 ];
