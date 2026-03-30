@@ -68,7 +68,7 @@ export default function Calculator() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-[2.5rem] p-5 sm:p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white relative z-10"
+          className="bg-white rounded-[2.5rem] p-5 sm:p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-slate-200 relative z-10"
         >
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 md:mb-14">
@@ -109,7 +109,7 @@ export default function Calculator() {
                   step="1"
                   value={area}
                   onChange={(e) => setArea(Number(e.target.value))}
-                  className="w-full h-2.5 bg-slate-100 rounded-full appearance-none cursor-pointer accent-blue-600 transition-all"
+                  className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 transition-all hover:bg-slate-300"
                 />
               </div>
 
@@ -123,17 +123,15 @@ export default function Calculator() {
                   <motion.label
                     key={item.id}
                     whileTap={{ scale: 0.98 }}
-                    className={`flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${
-                      item.state ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'
-                    }`}
+                    className={`flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer ${item.state ? 'border-blue-600 bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'
+                      }`}
                   >
                     <div className="flex-1">
                       <span className="block font-bold text-slate-900">{item.label}</span>
                       <span className="block text-xs text-slate-500 font-medium">{item.desc}</span>
                     </div>
-                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
-                      item.state ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
-                    }`}>
+                    <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${item.state ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
+                      }`}>
                       {item.state && <CheckCircle2 className="w-4 h-4 text-white" />}
                     </div>
                     <input type="checkbox" className="hidden" checked={item.state} onChange={(e) => item.setter(e.target.checked)} />
