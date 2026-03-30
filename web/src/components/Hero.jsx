@@ -37,10 +37,10 @@ export default function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#calculator" className="inline-flex justify-center items-center px-8 py-4 rounded-full bg-brand-accent-blue text-white font-medium hover:bg-blue-900 transition-all shadow-lg shadow-blue-900/20 hover:shadow-xl hover:-translate-y-0.5">
+              <a href="#calculator" className="inline-flex justify-center items-center px-8 py-4 rounded-full bg-brand-accent-blue text-white font-medium hover:bg-blue-900 active:scale-95 transition-all shadow-lg shadow-blue-900/20 hover:shadow-xl hover:-translate-y-0.5">
                 Рассчитать стоимость
               </a>
-              <a href="#portfolio" className="inline-flex justify-center items-center px-8 py-4 rounded-full bg-brand-gray hover:bg-brand-gray-dark text-brand-accent-graphite font-medium transition-all shadow-sm">
+              <a href="#portfolio" className="inline-flex justify-center items-center px-8 py-4 rounded-full bg-brand-gray hover:bg-brand-gray-dark active:scale-95 text-brand-accent-graphite font-medium transition-all shadow-sm">
                 Смотреть работы
               </a>
             </div>

@@ -58,7 +58,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-sm text-blue-200">Телефон для связи</p>
-                  <a href="tel:+7517137766" className="text-xl font-bold hover:text-blue-100 transition-colors">
+                  <a href="tel:+7517137766" className="text-xl font-bold hover:text-blue-100 active:scale-95 inline-block transition-transform">
                     +7 (951) 713-77-66
                   </a>
                 </div>
@@ -90,7 +90,18 @@ export default function Contact() {
                     id="phone"
                     required
                     value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    onChange={(e) => {
+                      let val = e.target.value.replace(/\D/g, '');
+                      if (val.startsWith('7') || val.startsWith('8')) val = val.substring(1);
+                      let formatted = '+7';
+                      if (val.length > 0) formatted += ` (${val.substring(0, 3)}`;
+                      if (val.length >= 4) formatted += `) ${val.substring(3, 6)}`;
+                      if (val.length >= 7) formatted += `-${val.substring(6, 8)}`;
+                      if (val.length >= 9) formatted += `-${val.substring(8, 10)}`;
+                      if (e.target.value === '') formatted = '';
+                      setFormData({ ...formData, phone: formatted });
+                    }}
+                    maxLength={18}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-brand-accent-blue focus:border-brand-accent-blue transition-all outline-none bg-brand-gray"
                     placeholder="+7 (___) ___-__-__"
                   />
@@ -112,7 +123,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={status === 'loading' || status === 'success'}
-                className="w-full py-4 px-6 rounded-xl bg-brand-accent-blue text-white font-bold flex items-center justify-center gap-2 hover:bg-blue-900 transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-4 px-6 rounded-xl bg-brand-accent-blue text-white font-bold flex items-center justify-center gap-2 hover:bg-blue-900 active:scale-[0.98] transition-all shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
               >
                 {status === 'loading' ? (
                   <span>Отправка...</span>

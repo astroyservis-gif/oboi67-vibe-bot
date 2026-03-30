@@ -156,9 +156,9 @@ export default function Calculator() {
                           <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
                             <span className="text-sm text-slate-500">Количество:</span>
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
-                              <button onClick={() => setRadiatorsCount(Math.max(1, radiatorsCount - 1))} className="w-8 h-8 flex items-center justify-center font-bold text-slate-600">-</button>
+                              <button onClick={() => setRadiatorsCount(Math.max(1, radiatorsCount - 1))} className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all">-</button>
                               <span className="w-8 text-center font-bold">{radiatorsCount}</span>
-                              <button onClick={() => setRadiatorsCount(radiatorsCount + 1)} className="w-8 h-8 flex items-center justify-center font-bold text-slate-600">+</button>
+                              <button onClick={() => setRadiatorsCount(radiatorsCount + 1)} className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all">+</button>
                             </div>
                           </div>
                         </motion.div>
@@ -185,14 +185,14 @@ export default function Calculator() {
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
                               <button
                                 onClick={() => setCeilingMeters(Math.max(1, ceilingMeters - 1))}
-                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all"
                               >
                                 -
                               </button>
                               <span className="w-8 text-center font-bold">{ceilingMeters}</span>
                               <button
                                 onClick={() => setCeilingMeters(ceilingMeters + 1)}
-                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all"
                               >
                                 +
                               </button>
@@ -222,14 +222,14 @@ export default function Calculator() {
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
                               <button
                                 onClick={() => setComplexElectricalCount(Math.max(1, complexElectricalCount - 1))}
-                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all"
                               >
                                 -
                               </button>
                               <span className="w-8 text-center font-bold">{complexElectricalCount}</span>
                               <button
                                 onClick={() => setComplexElectricalCount(complexElectricalCount + 1)}
-                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600"
+                                className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all"
                               >
                                 +
                               </button>

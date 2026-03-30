@@ -93,7 +93,7 @@ export default function Portfolio() {
               Посмотрите на примеры наших реальных проектов. Идеальные стыки, сложные паттерны и безупречная чистота линий.
             </p>
           </div>
-          <a href="https://www.instagram.com/yuriy_29041985/" target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex text-brand-accent-blue font-semibold hover:text-blue-800 transition-colors">
+          <a href="https://www.instagram.com/yuriy_29041985/" target="_blank" rel="noopener noreferrer" className="hidden md:inline-flex text-brand-accent-blue font-semibold hover:text-blue-800 active:scale-95 transition-all">
             Больше работ в Instagram →
           </a>
         </div>
