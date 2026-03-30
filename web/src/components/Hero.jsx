@@ -22,7 +22,7 @@ export default function Hero() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gray-dark text-brand-accent-graphite text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="w-4 h-4 text-brand-accent-blue" />
-              <span>Премиальный сервис в Смоленске</span>
+              <span>Сервис в Смоленске</span>
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-extrabold text-brand-accent-graphite leading-tight mb-6 tracking-tight">
@@ -33,7 +33,7 @@ export default function Hero() {
             </h1>
 
             <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-xl">
-              Профессиональный подход к отделке стен. Используем лазерную разметку и промышленные пылесосы для идеального результата и абсолютной чистоты.
+              Профессиональный подход к отделке стен. Использую профессиональный инструмент для идеального результата и абсолютной чистоты.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">

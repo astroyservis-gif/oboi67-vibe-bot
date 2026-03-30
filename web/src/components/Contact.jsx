@@ -35,7 +35,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-brand-gray relative overflow-hidden">
+    <section id="contact" className="pt-24 pb-[80px] md:pb-24 bg-brand-gray relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         <div className="bg-brand-accent-blue rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row">
@@ -47,7 +47,7 @@ export default function Contact() {
             <div className="relative z-10 mb-12 lg:mb-0">
               <h2 className="text-3xl lg:text-4xl font-bold mb-4">Обсудим ваш проект?</h2>
               <p className="text-blue-100 text-lg leading-relaxed">
-                Оставьте заявку на бесплатную консультацию и точный замер. Я свяжусь с вами в течение 15 минут.
+                Оставьте заявку на бесплатную консультацию и точный замер. Я свяжусь с вами в течение 30 минут.
               </p>
             </div>
 
@@ -59,7 +59,7 @@ export default function Contact() {
                 <div>
                   <p className="text-sm text-blue-200">Телефон для связи</p>
                   <a href="tel:+7517137766" className="text-xl font-bold hover:text-blue-100 transition-colors">
-                    +7 (900) 123-45-67
+                    +7 (951) 713-77-66
                   </a>
                 </div>
               </div>
