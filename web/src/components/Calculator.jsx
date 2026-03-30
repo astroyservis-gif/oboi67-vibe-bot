@@ -108,8 +108,9 @@ export default function Calculator() {
                   max="300"
                   step="1"
                   value={area}
-                  onChange={(e) => setArea(Number(e.target.value))}
-                  className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 transition-all hover:bg-slate-300"
+                  onInput={(e) => setArea(Number(e.target.value))}
+                  onDragStart={(e) => e.preventDefault()}
+                  className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 transition-all hover:bg-slate-300 select-none"
                 />
               </div>
 
