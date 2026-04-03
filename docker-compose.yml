@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Фронтенд (React/Vite + Nginx)
   web:
@@ -11,7 +9,7 @@ services:
     restart: unless-stopped
     # Заставляем web запускаться всегда (даже если бот упал)
 
-  # Бэкэнд (Python Telegram Bot)
+    # Бэкэнд (Python Telegram Bot)
   bot:
     build:
       context: .
