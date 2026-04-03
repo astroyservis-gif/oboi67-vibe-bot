@@ -1,9 +1,0 @@
-# Игнорируемые файлы для сборки бота
-web/
-.env
-.git/
-.venv/
-venv/
-__pycache__/
-*.pyc
-*.pyo

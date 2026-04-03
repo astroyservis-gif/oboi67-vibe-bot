@@ -9,12 +9,11 @@ services:
     restart: unless-stopped
     # Заставляем web запускаться всегда (даже если бот упал)
 
-    # Бэкэнд (Python Telegram Bot)
+  # Бэкэнд (Python Telegram Bot)
   bot:
     build:
-      context: .
+      context: ./bot # Теперь контекст — только папка бота
       dockerfile: Dockerfile
-    # Подтягиваем секреты и токены из .env файла
     env_file:
-      - .env
+      - ./bot/.env # Путь к конфигам тоже поправь
     restart: unless-stopped
