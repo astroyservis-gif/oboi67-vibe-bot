@@ -211,7 +211,7 @@ async def about_master_handler(callback: types.CallbackQuery, state: FSMContext)
         "🛒 <b>Автономность:</b> Сам подберу и закуплю правильные материалы.\n\n"
         "<i>С чего начнем ваш беззаботный ремонт?</i>"
     )
-    photo_path = os.path.join(os.path.dirname(__file__), '../docs/phote_about_me.jpg')
+    photo_path = os.path.join(os.path.dirname(__file__), 'phote_about_me.jpg')
     
     # We delete the previous message to send a new message with photo cleanly
     await callback.message.delete()
