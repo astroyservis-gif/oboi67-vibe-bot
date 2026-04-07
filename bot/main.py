@@ -56,7 +56,7 @@ class CalcStates(StatesGroup):
 # --- PRICES ---
 PRICES = {
     "Виниловые": 350,
-    "Флизелин": 350,
+    "Флизелин": 300,
     "Бумага": 350,
     "Премиум-текстиль": 800,
     "Демонтаж": 150,
@@ -76,7 +76,7 @@ def get_main_keyboard():
 def get_portfolio_keyboard():
     builder = InlineKeyboardBuilder()
     builder.button(text="📐 Стыки и детали", callback_data="portfolio_details")
-    builder.button(text="💎 Дорогие материалы", callback_data="portfolio_premium")
+    builder.button(text="💎 Фотообои", callback_data="portfolio_premium")
     builder.button(text="🏠 Общий вид", callback_data="portfolio_general")
     builder.button(text="⬅️ Назад", callback_data="main_menu")
     builder.adjust(1)
@@ -221,7 +221,7 @@ async def about_master_handler(callback: types.CallbackQuery, state: FSMContext)
         "Я знаю, что вы цените свое время и спокойствие. Моя задача — идеальный результат, пока вы занимаетесь своими делами.\n\n"
         "<b>Почему мне доверяют:</b>\n"
         "🤝 <b>Надежность:</b> Пунктуальность и соблюдение всех договоренностей.\n"
-        "🧹 <b>Чистота:</b> Работаю с пылесосом. После меня — только чистая комната.\n"
+        "🧹 <b>Чистота:</b> Делаю уборку после работы. После меня — только чистая комната.\n"
         "💎 <b>Качество:</b> Лазерная точность и невидимые стыки.\n"
         "🛡 <b>Гарантия:</b> 6 месяцев на все работы.\n"
         "🛒 <b>Автономность:</b> Сам подберу и закуплю правильные материалы.\n\n"
@@ -425,13 +425,13 @@ async def faq_item_handler(callback: types.CallbackQuery):
     answer_text = ""
     
     if topic == "faq_time":
-        answer_text = "<b>Сколько времени занимает одна комната?</b>\n\nСтандартная комната клеится за 1 день. Я фиксирую сроки в договоре и не пропадаю с объекта."
+        answer_text = "<b>Сколько времени занимает одна комната?</b>\n\nСтандартная комната клеится за 1 день. Я не пропадаю с объекта."
     elif topic == "faq_warranty":
         answer_text = "<b>Что делать, если через месяц разойдется стык?</b>\n\nЯ работаю официально как самозанятый и даю гарантию 6 месяцев. Если что-то случится не по вашей вине — приеду и исправлю бесплатно."
     elif topic == "faq_materials":
         answer_text = "<b>Нужно ли мне покупать клей и пленку?</b>\n\nЯ рекомендую конкретные составы под ваши обои или могу закупить и привезти проверенный клей сам."
     elif topic == "faq_prep":
-        answer_text = "<b>Как подготовить комнату к вашему приходу?</b>\n\nОсвободите стены, отодвиньте мебель на 1.5 метра. Подробную инструкцию пришлю вам сразу после записи на замер."
+        answer_text = "<b>Как подготовить комнату к вашему приходу?</b>\n\nОсвободите стены, отодвиньте мебель на 1.5 метра. Подробную инструкцию пришлю вам сразу после записи."
     else:
         return
 
@@ -439,35 +439,56 @@ async def faq_item_handler(callback: types.CallbackQuery):
     await callback.answer()
 
 
-# --- PORTFOLIO SECTION ---
 @dp.callback_query(F.data == "portfolio_menu")
 async def portfolio_menu_handler(callback: types.CallbackQuery):
-    await callback.message.edit_text("Какие примеры работ вам интересны?", reply_markup=get_portfolio_keyboard())
+    if callback.message.photo:
+        await callback.message.delete()
+        await callback.message.answer("Какие примеры работ вам интересны?", reply_markup=get_portfolio_keyboard())
+    else:
+        await callback.message.edit_text("Какие примеры работ вам интересны?", reply_markup=get_portfolio_keyboard())
     await callback.answer()
 
-@dp.callback_query(F.data.startswith("portfolio_"))
+
+@dp.callback_query(F.data.startswith("portfolio_") & (F.data != "portfolio_menu"))
 async def portfolio_category_handler(callback: types.CallbackQuery):
     cat = callback.data
-    caption = ""
-    
-    if cat == "portfolio_details":
-        caption = "🔍 Без видимых стыков. Лазерная точность на углах и вокруг розеток."
-    elif cat == "portfolio_premium":
-        caption = "💎 Работа с дорогими материалами. Аккуратность и подбор правильного клея."
-    elif cat == "portfolio_general":
-        caption = "🏠 Общий вид. Чистота на объекте — работаю с пылесосом."
-    else:
-        return
-
-    # In a real scenario, use actual file_ids or actual valid FSInputFiles
-    # For now, we simulate uploading 2 placeholder files if they existed, or skip to dummy text
-    # Since we lack real photos, we will send text and the button.
-    
     await callback.message.delete()
-    await callback.message.answer(
-        f"{caption}\n\n<i>(Здесь будет галерея фотографий)</i>", 
-        reply_markup=get_calc_return_keyboard()
-    )
+    
+    # Определяем путь к текущей папке, где лежит main.py
+    current_dir = os.path.dirname(__file__)
+
+    if cat == "portfolio_details":
+        # Используем ПЕРВОЕ фото (проверь, что буква P большая, как на скрине!)
+        photo_path = os.path.join(current_dir, "photo_2_1_reality.jpg")
+        await callback.message.answer_photo(
+            photo=FSInputFile(photo_path),
+            caption="🔍 <b>Стыки и детали</b>\n\nЛазерная точность на углах. Юрий делает так, чтобы швы исчезали.",
+            reply_markup=get_calc_return_keyboard()
+        )
+
+    elif cat == "portfolio_premium":
+        # Используем ВТОРОЕ фото
+        photo_path = os.path.join(current_dir, "Photo_1_reality.jpg")
+        await callback.message.answer_photo(
+            photo=FSInputFile(photo_path),
+            caption="💎 <b>Фотообои</b>\n\nРаботаем с текстилем и фресками. Бережное отношение к каждому рулону.",
+            reply_markup=get_calc_return_keyboard()
+        )
+
+    elif cat == "portfolio_general":
+        from aiogram.types import InputMediaPhoto
+        
+        # Собираем альбом из 3-х и 4-х фото (как на скрине)
+        media = [
+            InputMediaPhoto(media=FSInputFile(os.path.join(current_dir, "photo_3_reality.jpg")), 
+                            caption="🏠 <b>Общий вид</b>\nЧистота и ровные стены — стандарт работы Юрия."),
+            InputMediaPhoto(media=FSInputFile(os.path.join(current_dir, "photo_4_reality.jpg")))
+        ]
+        
+        await callback.message.answer_media_group(media=media)
+        await callback.message.answer("Хотите такой же результат? Рассчитайте стоимость:", 
+                                      reply_markup=get_calc_return_keyboard())
+
     await callback.answer()
 
 
