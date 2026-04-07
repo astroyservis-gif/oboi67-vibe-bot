@@ -4,28 +4,28 @@ import { Eye } from 'lucide-react';
 
 const projects = [
   {
-    image: "https://images.unsplash.com/photo-1615529182904-14819c35db37?auto=format&fit=crop&q=80",
-    realityImage: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80",
-    title: "Дизайнерские обои с подгоном",
-    desc: "Спальня, 45 м²"
+    image: "Photo_1.jpg",
+    realityImage: "Photo_1_reality.jpg",
+    title: "Обои Simple",
+    desc: "Гостиная, 18 м²"
   },
   {
-    image: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&q=80",
-    realityImage: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80",
+    image: "photo_2.jpg",
+    realityImage: "photo_2_reality.jpg",
     title: "Бесшовные флизелиновые",
-    desc: "Гостиная, 60 м²"
+    desc: "Кухня, 15 м²"
   },
   {
-    image: "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&q=80",
-    realityImage: "https://images.unsplash.com/photo-1505693314120-0d443867891c?auto=format&fit=crop&q=80",
+    image: "photo_3.jpg",
+    realityImage: "photo_3_reality.jpg",
     title: "Геометрический паттерн",
-    desc: "Детская, 20 м²"
+    desc: "Спальня, 20 м²"
   },
   {
-    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80",
-    realityImage: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80",
-    title: "Эксклюзивные текстильные",
-    desc: "Кабинет, 30 м²"
+    image: "photo_4.jpg",
+    realityImage: "photo_4_reality.jpg",
+    title: "Обои Rusch",
+    desc: "Гостиная, 25 м²"
   }
 ];
 
