@@ -12,7 +12,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
@@ -20,8 +20,18 @@ from dotenv import load_dotenv
 
 # Load env vars
 load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_BOT_TOKEN")
-ADMIN_ID = os.getenv("ADMIN_ID", "YOUR_ADMIN_ID") # Yuri's telegram ID
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+admin_id_raw = os.getenv("ADMIN_ID")
+
+if not BOT_TOKEN:
+    raise RuntimeError("BOT_TOKEN is not set. Please provide it in environment variables.")
+if not admin_id_raw:
+    raise RuntimeError("ADMIN_ID is not set. Please provide it in environment variables.")
+
+try:
+    ADMIN_ID = int(admin_id_raw)
+except ValueError as exc:
+    raise RuntimeError("ADMIN_ID must be a numeric Telegram user ID.") from exc  # Yuri's telegram ID
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -194,7 +204,13 @@ async def command_start_handler(event: types.Message | types.CallbackQuery, stat
     if isinstance(event, types.Message):
         await event.answer(welcome_text, reply_markup=get_main_keyboard())
     else:
-        await event.message.edit_text(welcome_text, reply_markup=get_main_keyboard())
+        # If the current message is media (for example after "about_master"),
+        # edit_text will fail. Replace it with a new text message instead.
+        if event.message.photo:
+            await event.message.delete()
+            await event.message.answer(welcome_text, reply_markup=get_main_keyboard())
+        else:
+            await event.message.edit_text(welcome_text, reply_markup=get_main_keyboard())
         await event.answer()
 
 @dp.callback_query(F.data == "about_master")
@@ -267,7 +283,8 @@ async def calc_area_mode_selected(callback: types.CallbackQuery, state: FSMConte
 async def calc_area_exact_input(message: types.Message, state: FSMContext):
     try:
         area = float(message.text.replace(',', '.'))
-        if area <= 0: raise ValueError
+        if area <= 0:
+            raise ValueError
     except ValueError:
         await message.answer("Пожалуйста, введите корректное число (например: 25.5)")
         return
@@ -307,7 +324,8 @@ async def calc_ceiling_selected(callback: types.CallbackQuery, state: FSMContext
 async def calc_floor_area_input(message: types.Message, state: FSMContext):
     try:
         floor = float(message.text.replace(',', '.'))
-        if floor <= 0: raise ValueError
+        if floor <= 0:
+            raise ValueError
     except ValueError:
         await message.answer("Пожалуйста, введите корректное число (например: 15)")
         return
@@ -457,8 +475,12 @@ async def portfolio_category_handler(callback: types.CallbackQuery):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Start bot polling in background
-    asyncio.create_task(dp.start_polling(bot))
-    yield
+    polling_task = asyncio.create_task(dp.start_polling(bot))
+    try:
+        yield
+    finally:
+        polling_task.cancel()
+        await bot.session.close()
 
 app = FastAPI(lifespan=lifespan)
 
