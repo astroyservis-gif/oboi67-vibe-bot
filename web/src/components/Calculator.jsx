@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Calculator as CalcIcon, Info, CheckCircle2, ChevronRight } from 'lucide-react';
 
 const BASE_PRICE = 350;
@@ -21,8 +21,9 @@ export default function Calculator() {
   const [complexElectrical, setComplexElectrical] = useState(false);
   const [complexElectricalCount, setComplexElectricalCount] = useState(1);
 
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
+  const hasInteracted =
+    area !== 20 || paper || dismantle || complexPattern || radiatorsDismantle || ceilingInsert || complexElectrical;
 
   // --- Calculations ---
   const total = useMemo(() => {
@@ -40,12 +41,6 @@ export default function Calculator() {
   }, [area, dismantle, complexPattern, paper, radiatorsDismantle, radiatorsCount, ceilingInsert, ceilingMeters, complexElectrical, complexElectricalCount]);
 
   // --- Effects ---
-  useEffect(() => {
-    if (area !== 20 || paper || dismantle || complexPattern || radiatorsDismantle || ceilingInsert || complexElectrical) {
-      setHasInteracted(true);
-    }
-  }, [area, paper, dismantle, complexPattern, radiatorsDismantle, ceilingInsert, complexElectrical]);
-
   useEffect(() => {
     const handleScroll = () => {
       // Футер появляется если мы проскроллили 600px И находимся в зоне калькулятора
