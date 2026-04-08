@@ -1,19 +1,30 @@
 services:
-  # Фронтенд (React/Vite + Nginx)
+  # Менеджер сертификатов и прокси
+  nginx-proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'   # Для обычного трафика
+      - '443:443' # Для защищенного (SSL)
+      - '81:81'   # Админка, где мы нажмем пару кнопок
+    volumes:
+      - ./nginx/data:/data
+      - ./nginx/letsencrypt:/etc/letsencrypt
+
+  # Твой сайт (теперь он спрятан за прокси)
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     restart: unless-stopped
-    # Заставляем web запускаться всегда (даже если бот упал)
 
-  # Бэкэнд (Python Telegram Bot)
+  # Твой бот
   bot:
     build:
-      context: ./bot # Теперь контекст — только папка бота
+      context: ./bot
       dockerfile: Dockerfile
     env_file:
-      - ./bot/.env # Путь к конфигам тоже поправь
+      - ./bot/.env
     restart: unless-stopped
