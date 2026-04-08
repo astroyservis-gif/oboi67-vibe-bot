@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calculator as CalcIcon, Info, CheckCircle2, ChevronRight } from 'lucide-react';
 
-const BASE_PRICE = 350;
+const BASE_PRICE = 300;
 
 export default function Calculator() {
   // --- Refs & View Tracking ---
@@ -99,7 +99,7 @@ export default function Calculator() {
                 </div>
                 <input
                   type="range"
-                  min="5"
+                  min="15"
                   max="300"
                   step="1"
                   value={area}

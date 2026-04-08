@@ -12,18 +12,25 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-
+  
+    // 1. Формируем текст сообщения для Юрия
+    const messageText = `Привет, Юрий! 👋\n\nМеня зовут ${formData.name}.\nМой номер: ${formData.phone}\n\nДетали проекта: ${formData.message || 'Хочу обсудить замер'}`;
+    
+    // 2. Кодируем текст для ссылки
+    const telegramUrl = `https://t.me/Yura_Oboi67?text=${encodeURIComponent(messageText)}`;
+  
     try {
+      // 3. Отправляем данные на твой бэкенд (чтобы сработал бот-оповещатель)
       const response = await fetch('http://localhost:8000/api/leads', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
+  
       if (response.ok) {
         setStatus('success');
+        // 4. Открываем Telegram в новой вкладке
+        window.open(telegramUrl, '_blank');
         setFormData({ name: '', phone: '', message: '' });
       } else {
         setStatus('error');
@@ -31,6 +38,8 @@ export default function Contact() {
     } catch (error) {
       console.error("Error submitting lead:", error);
       setStatus('error');
+      // Даже если бэкенд упал, всё равно даем пользователю написать в ТГ
+      window.open(telegramUrl, '_blank');
     }
   };
 
