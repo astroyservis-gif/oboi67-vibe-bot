@@ -51,16 +51,17 @@ class CalcStates(StatesGroup):
     ceiling_height = State()
     floor_area = State()
     dismantle = State()
+    primer = State()
     waiting_for_contact = State()
 
 # --- PRICES ---
 PRICES = {
-    "Виниловые": 350,
-    "Флизелин": 300,
-    "Бумага": 350,
-    "Премиум-текстиль": 800,
+    ## "Виниловые": 350,
+    "Флизелин": 250,
+    "Бумага": 300,
+    "Фотообои": 350,
     "Демонтаж": 150,
-    "Грунтовка": 0
+    "Грунтовка": 70
 }
 
 # --- KEYBOARDS ---
@@ -84,10 +85,10 @@ def get_portfolio_keyboard():
 
 def get_wallpaper_type_keyboard():
     builder = InlineKeyboardBuilder()
-    builder.button(text="Виниловые", callback_data="type:Виниловые")
+    ## builder.button(text="Виниловые", callback_data="type:Виниловые")
     builder.button(text="Флизелин", callback_data="type:Флизелин")
     builder.button(text="Бумага", callback_data="type:Бумага")
-    builder.button(text="Премиум-текстиль", callback_data="type:Премиум-текстиль")
+    builder.button(text="Фотообои", callback_data="type:Фотообои")
     builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     builder.adjust(2, 2, 1)
     return builder.as_markup()
@@ -96,6 +97,14 @@ def get_dismantle_keyboard():
     builder = InlineKeyboardBuilder()
     builder.button(text="Да", callback_data="dismantle:yes")
     builder.button(text="Нет", callback_data="dismantle:no")
+    builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
+    builder.adjust(2, 1)
+    return builder.as_markup()
+
+def get_primer_keyboard():
+    builder = InlineKeyboardBuilder()
+    builder.button(text="Да", callback_data="primer:yes")
+    builder.button(text="Нет", callback_data="primer:no")
     builder.button(text="⬅️ Вернуться в начало", callback_data="main_menu")
     builder.adjust(2, 1)
     return builder.as_markup()
@@ -258,7 +267,7 @@ async def calc_type_selected(callback: types.CallbackQuery, state: FSMContext):
     await state.update_data(wallpaper_type=wall_type)
     
     advice = "Отличный выбор! Для этого типа нужен специализированный клей, который я подберу сам."
-    if wall_type == "Премиум-текстиль":
+    if wall_type == "Фотообои":
         advice = "Текстильные обои требуют ювелирной работы и контроля влажности клея. Я использую специальные добавки."
 
     await state.set_state(CalcStates.area_mode)
@@ -340,26 +349,45 @@ async def calc_floor_area_input(message: types.Message, state: FSMContext):
 async def calc_dismantle_selected(callback: types.CallbackQuery, state: FSMContext):
     needs_dismantle = callback.data.split(":")[1] == "yes"
     await state.update_data(dismantle=needs_dismantle)
-    
+
+    await state.set_state(CalcStates.primer)
+    await callback.message.answer("Нужна ли грунтовка?", reply_markup=get_primer_keyboard())
+    await callback.answer()
+
+
+@dp.callback_query(StateFilter(CalcStates.primer), F.data.startswith("primer:"))
+async def calc_primer_selected(callback: types.CallbackQuery, state: FSMContext):
+    needs_primer = callback.data.split(":")[1] == "yes"
+    await state.update_data(primer=needs_primer)
+
     data = await state.get_data()
     w_type = data['wallpaper_type']
     area = float(data.get('area', 0))
     lazy_text = data.get('lazy_text', '')
-    
+
     msg = await callback.message.answer("Идет расчет оптимальной технологии... ⏳")
     await asyncio.sleep(3)
-    
+
     base_price = PRICES.get(w_type, 350)
-    dismantle_price = PRICES["Демонтаж"] if needs_dismantle else 0
-    total_price = int(area * (base_price + dismantle_price))
-    
+    dismantle_price = PRICES["Демонтаж"] if data.get("dismantle") else 0
+    primer_price = PRICES["Грунтовка"] if needs_primer else 0
+    total_price = int(area * (base_price + dismantle_price + primer_price))
+
     await state.update_data(total_price=total_price)
     await state.set_state(CalcStates.waiting_for_contact)
-    
+
+    extra_work_parts = []
+    if data.get("dismantle"):
+        extra_work_parts.append("демонтаж")
+    if needs_primer:
+        extra_work_parts.append("грунтовка")
+    extras_text = ", ".join(extra_work_parts) if extra_work_parts else "без доп. работ"
+
     final_text = (
         f"Для ваших обоев <b>«{w_type}»</b> на площади <b>~{area:.1f} м²</b> Юрий подберёт оптимальный набор клеевых составов.\n\n"
+        f"🔧 Доп. работы: <b>{extras_text}</b>\n"
         f"💰 Примерная стоимость работ: <b>~{total_price} руб.</b>\n"
-        "<i>(Грунтовка стен включена в стоимость)</i>\n\n"
+        "<i>(Финальную стоимость Юрий подтвердит после уточнения деталей)</i>\n\n"
     )
     if lazy_text:
         final_text += f"<i>{lazy_text} Юрий подтвердит итоговую цифру при звонке.</i>\n\n"
@@ -393,12 +421,13 @@ async def calc_contact_received(message: types.Message, state: FSMContext):
     
     # Notification to Admin
     dismantle_str = "Да" if data.get('dismantle') else "Нет"
+    primer_str = "Да" if data.get('primer') else "Нет"
     area_formatted = f"{float(data.get('area', 0)):.1f}"
     admin_text = (
         f"🔥 <b>НОВАЯ ЗАЯВКА (Телеграм)!</b>\n\n"
         f"Имя: {message.from_user.full_name}\n"
         f"Тел: {phone}\n"
-        f"Заказ: {data.get('wallpaper_type')}, {area_formatted} м², Демонтаж: {dismantle_str}\n"
+        f"Заказ: {data.get('wallpaper_type')}, {area_formatted} м², Демонтаж: {dismantle_str}, Грунтовка: {primer_str}\n"
         f"Расчет бота: {data.get('total_price')} руб."
     )
     try:
