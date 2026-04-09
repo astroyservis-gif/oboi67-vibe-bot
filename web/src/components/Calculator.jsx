@@ -13,6 +13,7 @@ export default function Calculator() {
   const [dismantle, setDismantle] = useState(false);
   const [complexPattern, setComplexPattern] = useState(false);
   const [paper, setPaper] = useState(false);
+  const [primer, setPrimer] = useState(false);
 
   const [radiatorsDismantle, setRadiatorsDismantle] = useState(false);
   const [radiatorsCount, setRadiatorsCount] = useState(1);
@@ -23,13 +24,14 @@ export default function Calculator() {
 
   const [showSticky, setShowSticky] = useState(false);
   const hasInteracted =
-    area !== 20 || paper || dismantle || complexPattern || radiatorsDismantle || ceilingInsert || complexElectrical;
+    area !== 20 || paper || dismantle || primer || complexPattern || radiatorsDismantle || ceilingInsert || complexElectrical;
 
   // --- Calculations ---
   const total = useMemo(() => {
     let costPerSqm = BASE_PRICE;
     if (complexPattern) costPerSqm += 100;
     if (paper) costPerSqm += 100;
+    if (primer) costPerSqm += 70;
 
     let baseTotal = area * costPerSqm;
     if (dismantle) baseTotal += (area * 150);
@@ -38,7 +40,7 @@ export default function Calculator() {
     if (complexElectrical) baseTotal += (complexElectricalCount * 300);
 
     return baseTotal;
-  }, [area, dismantle, complexPattern, paper, radiatorsDismantle, radiatorsCount, ceilingInsert, ceilingMeters, complexElectrical, complexElectricalCount]);
+  }, [area, dismantle, complexPattern, paper, primer, radiatorsDismantle, radiatorsCount, ceilingInsert, ceilingMeters, complexElectrical, complexElectricalCount]);
 
   // --- Effects ---
   useEffect(() => {
@@ -114,7 +116,8 @@ export default function Calculator() {
                 {[
                   { id: 'paper', label: 'Бумажные обои', desc: 'Узкое полотно 0.5м, требует опыта', state: paper, setter: setPaper },
                   { id: 'dismantle', label: 'Демонтаж старых обоев', desc: 'Снятие слоев и базовая очистка', state: dismantle, setter: setDismantle },
-                  { id: 'pattern', label: 'Сложный подбор рисунка', desc: 'Раппорт, смещение и подгонка', state: complexPattern, setter: setComplexPattern }
+                  { id: 'pattern', label: 'Сложный подбор рисунка', desc: 'Раппорт, смещение и подгонка', state: complexPattern, setter: setComplexPattern },
+                  { id: 'primer', label: 'Грунтовка стен', desc: 'Очистка и подготовка стен', state: primer, setter: setPrimer }
                 ].map((item) => (
                   <motion.label
                     key={item.id}
