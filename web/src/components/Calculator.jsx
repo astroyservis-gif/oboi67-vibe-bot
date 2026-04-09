@@ -117,7 +117,7 @@ export default function Calculator() {
                   { id: 'paper', label: 'Бумажные обои', desc: 'Узкое полотно 0.5м, требует опыта', state: paper, setter: setPaper },
                   { id: 'dismantle', label: 'Демонтаж старых обоев', desc: 'Снятие слоев и базовая очистка', state: dismantle, setter: setDismantle },
                   { id: 'pattern', label: 'Сложный подбор рисунка', desc: 'Раппорт, смещение и подгонка', state: complexPattern, setter: setComplexPattern },
-                  { id: 'primer', label: 'Грунтовка стен', desc: 'Очистка и подготовка стен', state: primer, setter: setPrimer }
+                  { id: 'primer', label: 'Грунтовка стен', desc: 'Подготовка стен', state: primer, setter: setPrimer }
                 ].map((item) => (
                   <motion.label
                     key={item.id}
