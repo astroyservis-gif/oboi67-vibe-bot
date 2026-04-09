@@ -43,9 +43,9 @@ export default function Calculator() {
   // --- Effects ---
   useEffect(() => {
     const handleScroll = () => {
-      // Футер появляется если мы проскроллили 600px И находимся в зоне калькулятора
+      // Футер появляется если мы проскроллили 2800px И находимся в зоне калькулятора
       const scrollPosition = window.scrollY;
-      setShowSticky(scrollPosition > 2800);
+      setShowSticky(scrollPosition > 2800 && scrollPosition < 3800);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -328,7 +328,7 @@ export default function Calculator() {
               href="#contact"
               className="px-8 py-3.5 bg-blue-600 text-white rounded-2xl text-sm font-black shadow-lg shadow-blue-200 active:bg-blue-700 transition-colors"
             >
-              Смета
+              Обсудить проект
             </motion.a>
           </motion.div>
         )}
