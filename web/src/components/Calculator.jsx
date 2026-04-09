@@ -277,7 +277,7 @@ export default function Calculator() {
                       <span className="text-xl">🛡️</span> Честная цена "Под ключ"
                     </h4>
                     <ul className="space-y-3">
-                      {['Грунтовка стен включена', 'Сложные углы — без доплат', 'Вырезы под розетки — 0 ₽'].map((text) => (
+                      {['Сложные углы — без доплат', 'Вырезы под розетки — 0 ₽'].map((text) => (
                         <li key={text} className="flex items-center gap-3 text-sm text-slate-300 font-medium">
                           <CheckCircle2 className="w-4 h-4 text-green-400" />
                           {text}
