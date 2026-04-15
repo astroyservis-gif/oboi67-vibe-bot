@@ -548,7 +548,7 @@ async def receive_lead(lead: Lead):
     Endpoint for the React frontend to push leads to Telegram
     """
     admin_text = (
-        f"🌐 <b>НОВАЯ ЗАЯВКА С САЙТА!</b>\n\n"
+        f"🔔 Новая заявка с сайта!\n\n"
         f"👤 Имя: {lead.name}\n"
         f"📞 Телефон: {lead.phone}\n"
     )
