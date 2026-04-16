@@ -74,7 +74,7 @@ export default function Calculator() {
                 <CalcIcon className="text-white w-7 h-7 -rotate-3" />
               </div>
               <div>
-                <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Калькулятор проекта</h2>
+                <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Цена на поклейку обоев в Смоленске</h2>
                 <p className="text-slate-500 text-sm md:text-base font-medium">Рассчитайте стоимость за 1 минуту</p>
               </div>
             </div>
@@ -249,7 +249,7 @@ export default function Calculator() {
                   {/* Background decoration */}
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
 
-                  <span className="text-blue-400 text-xs font-bold uppercase tracking-[0.2em]">Итоговая оценка</span>
+                  <span className="text-blue-400 text-xs font-bold uppercase tracking-[0.2em]">Итоговая цена за работу</span>
                   <div className="mt-4 flex items-baseline gap-2">
                     <motion.span
                       key={total}
@@ -267,6 +267,7 @@ export default function Calculator() {
                       <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                       <p className="text-xs text-slate-400 leading-relaxed">
                         Цена является предварительной. Точная смета составляется после бесплатного замера.
+                        В калькуляторе указана средняя цена за квадратный метр поклейки обоев в Смоленске на 2026 год
                       </p>
                     </div>
                   </div>

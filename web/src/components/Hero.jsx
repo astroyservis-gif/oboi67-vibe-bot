@@ -22,13 +22,13 @@ export default function Hero() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-gray-dark text-brand-accent-graphite text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="w-4 h-4 text-brand-accent-blue" />
-              <span>Сервис в Смоленске</span>
+              <span>Частный мастер</span>
             </div>
 
             <h1 className="text-5xl lg:text-6xl font-extrabold text-brand-accent-graphite leading-tight mb-6 tracking-tight">
-              Обои без стыков <br />
+              Поклейка обоев в Смоленске <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent-blue to-gray-600">
-                и лишних хлопот в Смоленске
+                без стыков и лишних хлопот
               </span>
             </h1>
 
