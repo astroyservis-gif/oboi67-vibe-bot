@@ -4,26 +4,26 @@ import { Eye } from 'lucide-react';
 
 const projects = [
   {
-    image: "Photo_1.jpg",
-    realityImage: "Photo_1_reality.jpg",
+      image: "https://cdn.oboi67.ru/Photo_1.jpg",
+      realityImage: "https://cdn.oboi67.ru/Photo_1_reality.jpg",
     title: "Обои Simple",
     desc: "Гостиная, 18 м²"
   },
   {
-    image: "photo_2.jpg",
-    realityImage: "photo_2_reality.jpg",
+      image: "https://cdn.oboi67.ru/photo_2.jpg",
+      realityImage: "https://cdn.oboi67.ru/photo_2_reality.jpg",
     title: "Бесшовные флизелиновые",
     desc: "Кухня, 15 м²"
   },
   {
-    image: "photo_3.jpg",
-    realityImage: "photo_3_reality.jpg",
+      image: "https://cdn.oboi67.ru/photo_3.jpg",
+      realityImage: "https://cdn.oboi67.ru/photo_3_reality.jpg",
     title: "Геометрический паттерн",
     desc: "Спальня, 20 м²"
   },
   {
-    image: "photo_4.jpg",
-    realityImage: "photo_4_reality.jpg",
+      image: "https://cdn.oboi67.ru/photo_4.jpg",
+      realityImage: "https://cdn.oboi67.ru/photo_4_reality.jpg",
     title: "Обои Rusch",
     desc: "Гостиная, 25 м²"
   }

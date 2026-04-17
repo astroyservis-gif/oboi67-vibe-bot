@@ -77,7 +77,7 @@ export default function Hero() {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-brand-gray aspect-[4/3] border border-gray-100">
               <img
-                src="/phote_about_me.jpg"
+                src="https://cdn.oboi67.ru/phote_about_me.jpg"
                 alt="Идеально поклеенные обои"
                 className="object-cover w-full h-full"
               />
