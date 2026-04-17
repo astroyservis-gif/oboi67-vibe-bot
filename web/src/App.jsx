@@ -21,7 +21,7 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-brand-gray-dark py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-700 text-sm">
           &copy; {new Date().getFullYear()} Профессиональная поклейка обоев. Смоленск. Все права защищены.
         </div>
       </footer>

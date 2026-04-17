@@ -55,7 +55,7 @@ export default function Hero() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">Гарантия 1 год</p>
-                  <p className="text-xs text-gray-500">По договору</p>
+                  <p className="text-xs text-gray-600">По договору</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -64,7 +64,7 @@ export default function Hero() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">Точно в срок</p>
-                  <p className="text-xs text-gray-500">Без задержек</p>
+                  <p className="text-xs text-gray-600">Без задержек</p>
                 </div>
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function Hero() {
               </div>
               <div>
                 <p className="font-bold text-gray-900 text-sm">Лет опыта</p>
-                <p className="text-xs text-gray-500">сотни довольных клиентов</p>
+                <p className="text-xs text-gray-600">сотни довольных клиентов</p>
               </div>
             </div>
           </motion.div>

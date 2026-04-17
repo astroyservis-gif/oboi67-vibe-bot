@@ -173,7 +173,7 @@ export default function Contact() {
                   )}
                 </button>
 
-                <p className="text-xs text-gray-400 text-center mt-4">
+                <p className="text-xs text-gray-600 text-center mt-4">
                   Нажимая на кнопку, вы даете согласие на обработку персональных данных.
                 </p>
               </form>

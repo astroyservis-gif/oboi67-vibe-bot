@@ -78,7 +78,7 @@ export default function Calculator() {
               </div>
               <div>
                 <h2 className="text-2xl md:text-4xl font-black text-slate-900 tracking-tight">Цена на поклейку обоев в Смоленске</h2>
-                <p className="text-slate-500 text-sm md:text-base font-medium">Рассчитайте стоимость за 1 минуту</p>
+                <p className="text-slate-600 text-sm md:text-base font-medium">Рассчитайте стоимость за 1 минуту</p>
               </div>
             </div>
 
@@ -96,10 +96,10 @@ export default function Calculator() {
               {/* Area Section */}
               <div className="space-y-6">
                 <div className="flex justify-between items-end">
-                  <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Параметры стен</span>
+                  <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Параметры стен</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-4xl font-black text-blue-600">{area}</span>
-                    <span className="text-lg font-bold text-slate-400">м²</span>
+                    <span className="text-lg font-bold text-slate-600">м²</span>
                   </div>
                 </div>
                 <input
@@ -110,6 +110,7 @@ export default function Calculator() {
                   value={area}
                   onInput={(e) => setArea(Number(e.target.value))}
                   onDragStart={(e) => e.preventDefault()}
+                  aria-label="Площадь стен"
                   className="w-full h-2.5 bg-slate-200 rounded-full appearance-none cursor-pointer accent-blue-600 transition-all hover:bg-slate-300 select-none"
                 />
               </div>
@@ -130,7 +131,7 @@ export default function Calculator() {
                   >
                     <div className="flex-1">
                       <span className="block font-bold text-slate-900">{item.label}</span>
-                      <span className="block text-xs text-slate-500 font-medium">{item.desc}</span>
+                      <span className="block text-xs text-slate-600 font-medium">{item.desc}</span>
                     </div>
                     <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${item.state ? 'bg-blue-600 border-blue-600' : 'border-slate-300'
                       }`}>
@@ -143,7 +144,7 @@ export default function Calculator() {
 
               {/* Engineering Works Section */}
               <div className="pt-6 border-t border-slate-100">
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Инженерные работы</h3>
+                <h3 className="text-sm font-bold text-slate-600 uppercase tracking-widest mb-6">Инженерные работы</h3>
                 <div className="space-y-4">
 
                   {/* Radiators Toggle */}
@@ -156,7 +157,7 @@ export default function Calculator() {
                       {radiatorsDismantle && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                           <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
-                            <span className="text-sm text-slate-500">Количество:</span>
+                            <span className="text-sm text-slate-600">Количество:</span>
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
                               <button onClick={() => setRadiatorsCount(Math.max(1, radiatorsCount - 1))} className="w-8 h-8 flex items-center justify-center font-bold text-slate-600 rounded-lg hover:bg-slate-200 active:scale-95 transition-all">-</button>
                               <span className="w-8 text-center font-bold">{radiatorsCount}</span>
@@ -183,7 +184,7 @@ export default function Calculator() {
                       {ceilingInsert && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                           <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
-                            <span className="text-sm text-slate-500">Метров погонных:</span>
+                            <span className="text-sm text-slate-600">Метров погонных:</span>
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
                               <button
                                 onClick={() => setCeilingMeters(Math.max(1, ceilingMeters - 1))}
@@ -220,7 +221,7 @@ export default function Calculator() {
                       {complexElectrical && (
                         <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                           <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-100">
-                            <span className="text-sm text-slate-500">Количество:</span>
+                            <span className="text-sm text-slate-600">Количество:</span>
                             <div className="flex items-center bg-slate-100 rounded-xl p-1">
                               <button
                                 onClick={() => setComplexElectricalCount(Math.max(1, complexElectricalCount - 1))}
@@ -318,16 +319,16 @@ export default function Calculator() {
             className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl shadow-[0_-8px_30px_rgba(0,0,0,0.1)] z-50 p-5 pb-8 border-t border-slate-100 flex items-center justify-between"
           >
             <div className="flex flex-col">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Оценка</span>
+              <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mb-1">Оценка</span>
               <motion.div
                 key={total}
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 className="text-2xl font-black text-slate-900 flex items-baseline gap-1"
               >
-                {!hasInteracted && <span className="text-sm font-bold text-slate-400">от</span>}
+                {!hasInteracted && <span className="text-sm font-bold text-slate-600">от</span>}
                 {total.toLocaleString('ru-RU')}
-                <span className="text-lg font-bold text-slate-400 font-black">₽</span>
+                <span className="text-lg font-bold text-slate-600 font-black">₽</span>
               </motion.div>
             </div>
             <motion.a
