@@ -80,6 +80,8 @@ export default function Hero() {
                 src="https://cdn.oboi67.ru/phote_about_me.jpg"
                 alt="Идеально поклеенные обои"
                 className="object-cover w-full h-full"
+                fetchpriority="high"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent mix-blend-multiply"></div>
             </div>
