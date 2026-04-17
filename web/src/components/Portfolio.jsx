@@ -4,26 +4,26 @@ import Eye from 'lucide-react/dist/esm/icons/eye';
 
 const projects = [
   {
-      image: "https://cdn.oboi67.ru/Photo_1.jpg",
-      realityImage: "https://cdn.oboi67.ru/Photo_1_reality.jpg",
+      image: "https://cdn.oboi67.ru/optimized/Photo_1.webp",
+      realityImage: "https://cdn.oboi67.ru/optimized/Photo_1_reality.webp",
     title: "Обои Simple",
     desc: "Гостиная, 18 м²"
   },
   {
-      image: "https://cdn.oboi67.ru/photo_2.jpg",
-      realityImage: "https://cdn.oboi67.ru/photo_2_reality.jpg",
+      image: "https://cdn.oboi67.ru/optimized/photo_2.webp",
+      realityImage: "https://cdn.oboi67.ru/optimized/photo_2_reality.webp",
     title: "Бесшовные флизелиновые",
     desc: "Кухня, 15 м²"
   },
   {
-      image: "https://cdn.oboi67.ru/photo_3.jpg",
-      realityImage: "https://cdn.oboi67.ru/photo_3_reality.jpg",
+      image: "https://cdn.oboi67.ru/optimized/photo_3.webp",
+      realityImage: "https://cdn.oboi67.ru/optimized/photo_3_reality.webp",
     title: "Геометрический паттерн",
     desc: "Спальня, 20 м²"
   },
   {
-      image: "https://cdn.oboi67.ru/photo_4.jpg",
-      realityImage: "https://cdn.oboi67.ru/photo_4_reality.jpg",
+      image: "https://cdn.oboi67.ru/optimized/photo_4.webp",
+      realityImage: "https://cdn.oboi67.ru/optimized/photo_4_reality.webp",
     title: "Обои Rusch",
     desc: "Гостиная, 25 м²"
   }
