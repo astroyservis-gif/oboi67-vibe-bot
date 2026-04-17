@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Eye } from 'lucide-react';
+import Eye from 'lucide-react/dist/esm/icons/eye';
 
 const projects = [
   {

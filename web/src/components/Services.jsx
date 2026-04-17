@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Droplets, Maximize, Target } from 'lucide-react';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
+import Droplets from 'lucide-react/dist/esm/icons/droplets';
+import Maximize from 'lucide-react/dist/esm/icons/maximize';
+import Target from 'lucide-react/dist/esm/icons/target';
 
 const standards = [
   {

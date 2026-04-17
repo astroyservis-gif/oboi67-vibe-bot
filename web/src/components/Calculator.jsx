@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calculator as CalcIcon, Info, CheckCircle2, ChevronRight } from 'lucide-react';
+import CalcIcon from 'lucide-react/dist/esm/icons/calculator';
+import Info from 'lucide-react/dist/esm/icons/info';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
 
 const BASE_PRICE = 300;
 

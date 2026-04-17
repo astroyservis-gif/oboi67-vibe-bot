@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Phone, CheckCircle2 } from 'lucide-react';
+import Send from 'lucide-react/dist/esm/icons/send';
+import Phone from 'lucide-react/dist/esm/icons/phone';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
 
 export default function Contact() {
   const [formData, setFormData] = useState({

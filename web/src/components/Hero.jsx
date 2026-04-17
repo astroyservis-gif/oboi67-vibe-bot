@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Ruler, ShieldCheck, Sparkles } from 'lucide-react';
+import Ruler from 'lucide-react/dist/esm/icons/ruler';
+import ShieldCheck from 'lucide-react/dist/esm/icons/shield-check';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
 
 export default function Hero() {
   return (
