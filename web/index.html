@@ -5,15 +5,7 @@
   <link rel="preconnect" href="https://cdn.oboi67.ru">
   <link rel="dns-prefetch" href="https://cdn.oboi67.ru">
 
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CCG73SYGJC"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-CCG73SYGJC');
-  </script>
+  <!-- Analytics initialization (deferred) below -->
 
   <meta charset="UTF-8" />
   <link rel="preload" as="image" href="https://cdn.oboi67.ru/optimized/phote_about_me.webp" fetchpriority="high" />
@@ -45,28 +37,42 @@
   <meta name="twitter:description" content="Профессиональная поклейка обоев в Смоленске.">
   <meta name="twitter:image" content="https://cdn.oboi67.ru/optimized/phote_about_me.webp">
 
-  <!-- Yandex.Metrica counter -->
+  <!-- Delayed Analytics Loader -->
   <script type="text/javascript">
-    (function (m, e, t, r, i, k, a) {
-      m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments) };
-      m[i].l = 1 * new Date();
-      for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
-      k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
-    })
+    let analyticsLoaded = false;
+    function loadAnalytics() {
+      if (analyticsLoaded) return;
+      analyticsLoaded = true;
+
+      // Google Tag
+      const gtagScript = document.createElement('script');
+      gtagScript.async = true;
+      gtagScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-CCG73SYGJC';
+      document.body.appendChild(gtagScript);
+      
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      window.gtag = gtag;
+      gtag('js', new Date());
+      gtag('config', 'G-CCG73SYGJC');
+
+      // Yandex Metrica
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js?id=108560758", "ym");
 
-    ym(108560758, "init", {
-      ssr: true,
-      clickmap: true,
-      referrer: document.referrer,
-      url: location.href,
-      trackLinks: true,
-      accurateTrackBounce: true,
-      webvisor: true,
-      ecommerce: "dataLayer"
+      ym(108560758, "init", {
+        clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true
+      });
+    }
+
+    setTimeout(loadAnalytics, 3500);
+    ['scroll', 'mousemove', 'touchstart'].forEach(function(event) {
+      window.addEventListener(event, loadAnalytics, { once: true, passive: true });
     });
   </script>
-  <!-- /Yandex.Metrica counter -->
 
   <script type="application/ld+json">
     {
